@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Volume2, VolumeX, Sparkles, Lock } from 'lucide-react';
 import { Bubbles } from './games/Bubbles/Bubbles';
+import { JellyLink } from './games/JellyLink/JellyLink';
 
 interface GameContainerProps {
   gameId: string;
@@ -64,7 +65,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({
         </button>
 
         <span className="baseline-header-title">
-          {gameId === 'soothing-bubbles' ? 'ぷにぷに泡ポチ' : '開発中のゲーム'}
+          {gameId === 'soothing-bubbles' ? 'ぷにぷに泡ポチ' : gameId === 'jelly-link' ? 'ぷるぷるゼリーリンク' : '開発中のゲーム'}
         </span>
 
         <button onClick={() => setMuted(!muted)} className="baseline-btn-back">
@@ -76,6 +77,12 @@ export const GameContainer: React.FC<GameContainerProps> = ({
       <div className="baseline-content" style={{ padding: 0, position: 'relative' }}>
         {gameId === 'soothing-bubbles' ? (
           <Bubbles 
+            onBackToPortal={onBackToPortal} 
+            addPoints={addPoints} 
+            incrementStat={incrementStat} 
+          />
+        ) : gameId === 'jelly-link' ? (
+          <JellyLink 
             onBackToPortal={onBackToPortal} 
             addPoints={addPoints} 
             incrementStat={incrementStat} 

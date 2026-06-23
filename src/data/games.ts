@@ -11,6 +11,16 @@ export interface GameMetadata {
 
 export const gamesList: GameMetadata[] = [
   {
+    id: 'jelly-link',
+    title: 'ぷるぷるゼリーリンク',
+    category: 'パズル',
+    coverImage: 'assets/jelly_link_cover.jpg',
+    coverColor: 'linear-gradient(135deg, #fb7185 0%, #f43f5e 100%)',
+    icon: 'Sparkles',
+    description: '同じ色のゼリーを一筆書きで繋げて消す、制限時間60秒のツムツム風爽快パズルゲーム。たくさん消してフィーバーを目指そう！',
+    isLocked: false
+  },
+  {
     id: 'soothing-bubbles',
     title: 'ぷにぷに泡ポチ',
     category: '基準ゲーム',
