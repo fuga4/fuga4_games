@@ -4,6 +4,8 @@ import { Star, Heart } from 'lucide-react';
 
 interface BubblesProps {
   onBackToPortal: () => void;
+  addPoints: (amount: number) => void;
+  incrementStat: (statName: 'totalPops' | 'appLaunches' | 'gamesPlayed', amount?: number) => void;
 }
 
 interface Bubble {
@@ -39,11 +41,16 @@ const BUBBLE_COLORS = [
 
 const BUBBLE_EMOJIS = ['☺️', '⭐', '✨', '🌸', '🧸', '🐣', '🍀'];
 
-export const Bubbles: React.FC<BubblesProps> = () => {
+export const Bubbles: React.FC<BubblesProps> = ({ addPoints, incrementStat }) => {
   const [bubbles, setBubbles] = useState<Bubble[]>([]);
   const [particles, setParticles] = useState<PopParticle[]>([]);
   const [popCount, setPopCount] = useState<number>(0);
   const playAreaRef = useRef<HTMLDivElement>(null);
+
+  // Increment gamesPlayed on component mount
+  useEffect(() => {
+    incrementStat('gamesPlayed', 1);
+  }, [incrementStat]);
 
   // Spawn bubbles periodically
   useEffect(() => {
@@ -136,6 +143,10 @@ export const Bubbles: React.FC<BubblesProps> = () => {
     // Pop the bubble! Remove it from state
     setBubbles((prev) => prev.filter((b) => b.id !== bubble.id));
     setPopCount((prev) => prev + 1);
+
+    // Save Data Hook Integrations: Add points & update stats
+    addPoints(bubble.emoji === '👑' ? 10 : 1);
+    incrementStat('totalPops', 1);
 
     // Create explosion particles
     const particleCount = bubble.size > 80 ? 12 : 8;

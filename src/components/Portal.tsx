@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, ShoppingBag, Image, Sliders, Power, Gamepad2, ArrowLeft, ArrowRight, Lock
+  ShoppingBag, Image, Sliders, Power, Gamepad2, ArrowLeft, ArrowRight, Lock
 } from 'lucide-react';
 import { type GameMetadata, gamesList } from '../data/games';
+import { type SaveData } from '../hooks/useSaveData';
+import { avatarsList } from '../data/avatars';
 
 interface PortalProps {
+  saveData: SaveData;
   onSelectGame: (gameId: string) => void;
+  onOpenMyPage: () => void;
+  onOpenShop: () => void;
 }
 
-export const Portal: React.FC<PortalProps> = ({ onSelectGame }) => {
+export const Portal: React.FC<PortalProps> = ({ saveData, onSelectGame, onOpenMyPage, onOpenShop }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [showSystemPopup, setShowSystemPopup] = useState<string | null>(null);
 
@@ -30,15 +35,17 @@ export const Portal: React.FC<PortalProps> = ({ onSelectGame }) => {
     onSelectGame(game.id);
   };
 
+  const activeAvatar = avatarsList.find((a) => a.id === saveData.activeAvatarId) || avatarsList[0];
+
   return (
     <div className="switch-container">
       
       {/* 1. STATUS BAR */}
       <div className="switch-status-bar">
         {/* Left: User Profile Icon */}
-        <div className="switch-profile-area">
-          <div className="switch-avatar-circle">
-            <User className="w-4 h-4 text-white" style={{ width: '16px', height: '16px' }} />
+        <div className="switch-profile-area" onClick={onOpenMyPage}>
+          <div className="switch-avatar-circle" style={{ backgroundColor: activeAvatar.bgColor }}>
+            <span style={{ fontSize: '18px', display: 'block', lineHeight: 1 }}>{activeAvatar.emoji}</span>
             <div className="switch-avatar-online" />
           </div>
           <span className="switch-profile-name">ユーザー1</span>
@@ -195,8 +202,14 @@ export const Portal: React.FC<PortalProps> = ({ onSelectGame }) => {
               key={btn.id} 
               className="switch-system-btn-item"
               onClick={() => {
-                setShowSystemPopup(`${btn.label}機能は現在準備中です。`);
-                setTimeout(() => setShowSystemPopup(null), 2000);
+                if (btn.id === 'eshop') {
+                  onOpenShop();
+                } else if (btn.id === 'album') {
+                  onOpenMyPage(); // Map Album to Achievements page
+                } else {
+                  setShowSystemPopup(`${btn.label}機能は現在準備中です。`);
+                  setTimeout(() => setShowSystemPopup(null), 2000);
+                }
               }}
             >
               <div className="switch-system-btn-circle">

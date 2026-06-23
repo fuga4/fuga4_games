@@ -6,9 +6,16 @@ import { Bubbles } from './games/Bubbles/Bubbles';
 interface GameContainerProps {
   gameId: string;
   onBackToPortal: () => void;
+  addPoints: (amount: number) => void;
+  incrementStat: (statName: 'totalPops' | 'appLaunches' | 'gamesPlayed', amount?: number) => void;
 }
 
-export const GameContainer: React.FC<GameContainerProps> = ({ gameId, onBackToPortal }) => {
+export const GameContainer: React.FC<GameContainerProps> = ({ 
+  gameId, 
+  onBackToPortal, 
+  addPoints, 
+  incrementStat 
+}) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [muted, setMuted] = useState<boolean>(false);
 
@@ -57,7 +64,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({ gameId, onBackToPo
         </button>
 
         <span className="baseline-header-title">
-          {gameId === 'soothing-bubbles' ? 'ぷにぷに泡ポチ (開発ベース)' : '開発中のゲーム'}
+          {gameId === 'soothing-bubbles' ? 'ぷにぷに泡ポチ' : '開発中のゲーム'}
         </span>
 
         <button onClick={() => setMuted(!muted)} className="baseline-btn-back">
@@ -68,7 +75,11 @@ export const GameContainer: React.FC<GameContainerProps> = ({ gameId, onBackToPo
       {/* Main Sandbox / Game Area */}
       <div className="baseline-content" style={{ padding: 0, position: 'relative' }}>
         {gameId === 'soothing-bubbles' ? (
-          <Bubbles onBackToPortal={onBackToPortal} />
+          <Bubbles 
+            onBackToPortal={onBackToPortal} 
+            addPoints={addPoints} 
+            incrementStat={incrementStat} 
+          />
         ) : (
           <div className="baseline-placeholder-locked">
             <div className="baseline-locked-icon-holder">
