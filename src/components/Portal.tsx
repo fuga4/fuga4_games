@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  User, Wifi, Battery, ShoppingBag, Image, Sliders, Power, Gamepad2, ArrowLeft, ArrowRight, Lock
+  User, ShoppingBag, Image, Sliders, Power, Gamepad2, ArrowLeft, ArrowRight, Lock
 } from 'lucide-react';
 import { type GameMetadata, gamesList } from '../data/games';
 
@@ -11,35 +11,7 @@ interface PortalProps {
 
 export const Portal: React.FC<PortalProps> = ({ onSelectGame }) => {
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const [time, setTime] = useState<string>('00:00');
-  const [batteryLevel, setBatteryLevel] = useState<number>(100);
   const [showSystemPopup, setShowSystemPopup] = useState<string | null>(null);
-
-  // Update time and mock battery
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      setTime(`${hours}:${minutes}`);
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-
-    // Get real battery if API is available, otherwise mock
-    if ('getBattery' in navigator) {
-      (navigator as any).getBattery().then((battery: any) => {
-        setBatteryLevel(Math.round(battery.level * 100));
-        battery.addEventListener('levelchange', () => {
-          setBatteryLevel(Math.round(battery.level * 100));
-        });
-      });
-    } else {
-      setBatteryLevel(94);
-    }
-
-    return () => clearInterval(interval);
-  }, []);
 
   const handlePrev = () => {
     setSelectedIndex((prev) => (prev > 0 ? prev - 1 : gamesList.length - 1));
@@ -72,23 +44,8 @@ export const Portal: React.FC<PortalProps> = ({ onSelectGame }) => {
           <span className="switch-profile-name">ユーザー1</span>
         </div>
 
-        {/* Right: Network, Battery and Time */}
-        <div className="switch-status-right">
-          <Wifi style={{ width: '16px', height: '16px', color: '#8e8e93' }} />
-          
-          <div className="switch-battery-container">
-            <span style={{ fontSize: '11px', fontFamily: 'monospace', fontWeight: 'bold' }}>{batteryLevel}%</span>
-            <div className="switch-battery-icon-wrapper">
-              <Battery style={{ width: '20px', height: '20px', color: '#8e8e93' }} />
-              <div 
-                className="switch-battery-fill"
-                style={{ width: `${(batteryLevel / 100) * 11}px` }}
-              />
-            </div>
-          </div>
-
-          <span style={{ fontWeight: 'bold', marginLeft: '4px', fontFamily: 'monospace' }}>{time}</span>
-        </div>
+        {/* Right: Network status elements removed as requested */}
+        <div className="switch-status-right" />
       </div>
 
       {/* 2. GAME SELECTION CAROUSEL ZONE */}
@@ -114,6 +71,17 @@ export const Portal: React.FC<PortalProps> = ({ onSelectGame }) => {
                 return (
                   <motion.div
                     key={game.id}
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.25}
+                    onDragEnd={(_event, info) => {
+                      const swipeThreshold = 50;
+                      if (info.offset.x < -swipeThreshold) {
+                        handleNext();
+                      } else if (info.offset.x > swipeThreshold) {
+                        handlePrev();
+                      }
+                    }}
                     initial={{
                       scale: offset === 0 ? 1.05 : 0.85,
                       x: offset * 180,
@@ -145,6 +113,7 @@ export const Portal: React.FC<PortalProps> = ({ onSelectGame }) => {
                       backgroundImage: `url(${coverUrl})`,
                       position: 'absolute',
                       zIndex: offset === 0 ? 10 : 5,
+                      touchAction: 'none', // Prevents default scroll behaviors when swiping cards
                     }}
                   >
                     {/* Upper overlay metadata */}
