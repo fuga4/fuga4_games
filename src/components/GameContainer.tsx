@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Play, Volume2, VolumeX, Sparkles, Lock } from 'lucide-react';
+import { ArrowLeft, Volume2, VolumeX, Sparkles, Lock } from 'lucide-react';
+import { Bubbles } from './games/Bubbles/Bubbles';
 
 interface GameContainerProps {
   gameId: string;
@@ -64,44 +65,10 @@ export const GameContainer: React.FC<GameContainerProps> = ({ gameId, onBackToPo
         </button>
       </div>
 
-      {/* Main Sandbox / Game Placeholder */}
-      <div className="baseline-content">
+      {/* Main Sandbox / Game Area */}
+      <div className="baseline-content" style={{ padding: 0, position: 'relative' }}>
         {gameId === 'soothing-bubbles' ? (
-          <div className="baseline-game-info-block" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', margin: 0 }}>
-            {/* Soothing bubble representation */}
-            <motion.div
-              animate={{ 
-                y: [0, -10, 0],
-                scale: [1, 1.02, 1]
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-              className="baseline-bubble-visual"
-              whileTap={{ scale: 0.9 }}
-              onClick={() => alert('ゲーム本編は次のステップで実装されます！')}
-            >
-              <Sparkles style={{ width: '48px', height: '48px', color: '#fbcfe8' }} className="animate-pulse-soft" />
-              <div className="baseline-bubble-highlight" />
-            </motion.div>
-
-            <div style={{ marginTop: '24px' }}>
-              <h3 className="baseline-game-h3">ぷにぷに泡ポチ</h3>
-              <p className="baseline-game-desc">
-                これは最初の基準ゲームのプレースホルダーです。
-                次回のステップで、この画面内に「ぷにぷに泡を消す心地よいゲームプレイ」をバグのない堅牢なコードで構築します。
-              </p>
-            </div>
-
-            <button
-              onClick={() => alert('ゲーム本編は次のステップで実装されます！')}
-              className="baseline-btn-play"
-            >
-              <Play style={{ width: '16px', height: '16px' }} /> テストプレイ
-            </button>
-          </div>
+          <Bubbles onBackToPortal={onBackToPortal} />
         ) : (
           <div className="baseline-placeholder-locked">
             <div className="baseline-locked-icon-holder">
